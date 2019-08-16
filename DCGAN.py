@@ -9,8 +9,8 @@ import os
 import argparse
 from ast import literal_eval
 
-from scipy.misc import imsave
-
+#from scipy.misc import imsave
+import matplotlib.image as mpimg
 
 class DCGAN:
     def __init__(self, discriminator_path, generator_path, output_directory, img_size):
@@ -190,7 +190,7 @@ class DCGAN:
             d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
 
             # Print progress
-            print(f"{epoch} [D loss: {d_loss[0]} | D Accuracy: {100 * d_loss[1]}] [G loss: {g_loss}]")
+            print("{epoch} [D loss: {d_loss[0]} | D Accuracy: {100 * d_loss[1]}] [G loss: {g_loss}]")
 
             # If at save interval => save generated image samples, save model files
             if epoch % (save_interval) == 0:
@@ -220,7 +220,7 @@ class DCGAN:
             path = f"{self.output_directory}/generated_{self.img_size[0]}x{self.img_size[1]}"
             if not os.path.exists(path):
                 os.makedirs(path)
-            imsave(path + f"/{epoch}_{i}.png", img_array)
+            mpimg.imsave(path + f"/{epoch}_{i}.png", img_array)
 
         nindex, height, width, intensity = imgs.shape
         nrows = nindex // c
@@ -233,7 +233,7 @@ class DCGAN:
         path = f"{self.output_directory}/gallery_generated_{self.img_size[0]}x{self.img_size[1]}"
         if not os.path.exists(path):
             os.makedirs(path)
-        imsave(path + f"/{epoch}.png", gallery)
+        mpimg.imsave(path + f"/{epoch}.png", gallery)
 
     def generate_imgs(self, count, threshold, modifier):
         self.build_gan()
@@ -244,9 +244,9 @@ class DCGAN:
         imgs = []
         for i in range(count):
             score = [0]
-            while not(threshold[0] < score[0] < threshold[1]):
-                img = self.gene_imgs(1)
-                score = self.discriminator.predict(img)
+            #while not(threshold[0] < score[0] < threshold[1]):
+            img = self.gene_imgs(1)
+            score = self.discriminator.predict(img)    
             print("Image found: ", score[0])
             imgs.append(img)
 
@@ -258,7 +258,7 @@ class DCGAN:
             path = f"{self.output_directory}/generated_{threshold[0]}_{threshold[1]}"
             if not os.path.exists(path):
                 os.makedirs(path)
-            imsave(path + f"/{modifier}_{i}.png", img_array)
+            mpimg.imsave(path + f"/{modifier}_{i}.png", img_array)
 
 
 if __name__ == '__main__':
